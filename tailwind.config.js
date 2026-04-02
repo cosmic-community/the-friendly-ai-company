@@ -1,0 +1,113 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        sunshine: {
+          50: '#FFFDF0',
+          100: '#FFF9D6',
+          200: '#FFF2AD',
+          300: '#FFE985',
+          400: '#FFDD57',
+          500: '#FFD233',
+          600: '#E6B800',
+          700: '#B38F00',
+          800: '#806600',
+          900: '#4D3D00',
+        },
+        sky: {
+          50: '#F0F7FF',
+          100: '#DCEEFF',
+          200: '#B8DDFF',
+          300: '#85C7FF',
+          400: '#57B0FF',
+          500: '#3399FF',
+          600: '#1A7FE6',
+          700: '#0066CC',
+          800: '#004D99',
+          900: '#003366',
+        },
+        meadow: {
+          50: '#F0FFF4',
+          100: '#D6FFE3',
+          200: '#ADFFC7',
+          300: '#85FFAB',
+          400: '#57E680',
+          500: '#33CC5C',
+          600: '#1AB347',
+          700: '#009933',
+          800: '#007326',
+          900: '#004D19',
+        },
+        blush: {
+          50: '#FFF0F5',
+          100: '#FFD6E6',
+          200: '#FFB3D1',
+          300: '#FF85B5',
+          400: '#FF579A',
+          500: '#FF3385',
+          600: '#E61A6E',
+          700: '#CC0058',
+          800: '#990042',
+          900: '#66002C',
+        },
+        warm: {
+          50: '#FFF8F0',
+          100: '#FFECD6',
+          200: '#FFDAAD',
+          300: '#FFC285',
+          400: '#FFAA57',
+          500: '#FF9533',
+          600: '#E67A1A',
+          700: '#CC6200',
+          800: '#994A00',
+          900: '#663100',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      },
+      borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.25rem',
+        '3xl': '1.5rem',
+        '4xl': '2rem',
+      },
+      boxShadow: {
+        'friendly': '0 4px 20px rgba(255, 210, 51, 0.15)',
+        'friendly-lg': '0 8px 30px rgba(255, 210, 51, 0.2)',
+        'card': '0 2px 12px rgba(0, 0, 0, 0.06)',
+        'card-hover': '0 8px 30px rgba(0, 0, 0, 0.1)',
+      },
+      animation: {
+        'float': 'float 3s ease-in-out infinite',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
