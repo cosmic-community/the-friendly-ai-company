@@ -4,29 +4,31 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const navLinks = [
-  { href: '/', label: 'Home', emoji: '🏠' },
-  { href: '/shop', label: 'Shop', emoji: '🛍️' },
-  { href: '/blog', label: 'Blog', emoji: '📝' },
-  { href: '/about', label: 'About', emoji: '💡' },
-  { href: '/contact', label: 'Contact', emoji: '💌' },
+  { href: '/', label: 'Home' },
+  { href: '/shop', label: 'Shop' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-sunshine-100">
+    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-sunshine-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-2xl sm:text-3xl group-hover:animate-wiggle">🤖</span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-sunshine-400 rounded-xl flex items-center justify-center shadow-friendly group-hover:shadow-friendly-lg transition-all duration-300">
+              <span className="text-xl">🤖</span>
+            </div>
             <div className="flex flex-col">
               <span className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
                 The Friendly AI Co.
               </span>
-              <span className="text-xs text-sunshine-600 font-medium hidden sm:block">
-                Marketing made friendly ✨
+              <span className="text-xs text-gray-500 font-medium hidden sm:block">
+                Marketing made friendly
               </span>
             </div>
           </Link>
@@ -39,7 +41,6 @@ export default function Header() {
                 href={link.href}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-sunshine-50 rounded-xl transition-all duration-200"
               >
-                <span className="mr-1">{link.emoji}</span>
                 {link.label}
               </Link>
             ))}
@@ -47,7 +48,7 @@ export default function Header() {
               href="/shop"
               className="ml-2 btn-primary text-sm py-2 px-5"
             >
-              Get Started 🚀
+              Get Started
             </Link>
           </nav>
 
@@ -79,9 +80,8 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-sunshine-50 rounded-xl transition-colors"
+                className="flex items-center px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-sunshine-50 rounded-xl transition-colors"
               >
-                <span className="text-xl">{link.emoji}</span>
                 {link.label}
               </Link>
             ))}
@@ -91,7 +91,7 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="btn-primary w-full text-center"
               >
-                Get Started 🚀
+                Get Started
               </Link>
             </div>
           </nav>
