@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
   { href: '/shop', label: 'Shop' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'About' },
@@ -13,21 +13,43 @@ const navLinks = [
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-sunshine-200">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/95 backdrop-blur-lg shadow-[0_1px_0_rgba(0,0,0,0.06),0_4px_24px_rgba(0,0,0,0.05)]'
+          : 'bg-white/80 backdrop-blur-md border-b border-gray-100/80'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-sunshine-400 rounded-xl flex items-center justify-center shadow-friendly group-hover:shadow-friendly-lg transition-all duration-300">
-              <span className="text-xl">🤖</span>
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 bg-sunshine-400 rounded-xl shadow-friendly group-hover:shadow-friendly-lg transition-all duration-300 group-hover:scale-105" />
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                <span className="text-xl leading-none">🤖</span>
+              </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
+              <span className="text-base sm:text-lg font-bold text-gray-900 leading-tight tracking-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 The Friendly AI Co.
               </span>
-              <span className="text-xs text-gray-500 font-medium hidden sm:block">
+              <span className="text-[10px] text-gray-400 font-medium hidden sm:block tracking-wide uppercase">
                 Marketing made friendly
               </span>
             </div>
@@ -35,68 +57,92 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-sunshine-50 rounded-xl transition-all duration-200"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
+                    isActive
+                      ? 'text-gray-900 bg-sunshine-50'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-sunshine-500 rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* CTA */}
+          <div className="hidden md:flex items-center gap-3">
             <Link
               href="/shop"
-              className="ml-2 btn-primary text-sm py-2 px-5"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-sunshine-500 text-gray-900 font-bold text-sm rounded-xl shadow-friendly hover:bg-sunshine-400 hover:shadow-friendly-lg transition-all duration-300 hover:-translate-y-px active:translate-y-0"
             >
-              Get Started
+              <span>Get Started</span>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
             </Link>
-          </nav>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-sunshine-50 transition-colors"
+            className="md:hidden relative p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all"
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
+            <div className="w-5 h-4 flex flex-col justify-between">
+              <span className={`block h-0.5 bg-current rounded-full transition-all duration-300 origin-center ${
+                isMobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''
+              }`} />
+              <span className={`block h-0.5 bg-current rounded-full transition-all duration-200 ${
+                isMobileMenuOpen ? 'opacity-0 scale-x-0' : ''
+              }`} />
+              <span className={`block h-0.5 bg-current rounded-full transition-all duration-300 origin-center ${
+                isMobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''
+              }`} />
+            </div>
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-sunshine-100 bg-white animate-fade-in">
-          <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1">
-            {navLinks.map((link) => (
+      <div
+        className={`md:hidden border-t border-gray-100 bg-white overflow-hidden transition-all duration-300 ${
+          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+            return (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-sunshine-50 rounded-xl transition-colors"
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+                  isActive ? 'text-gray-900 bg-sunshine-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
               >
                 {link.label}
               </Link>
-            ))}
-            <div className="pt-2">
-              <Link
-                href="/shop"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-primary w-full text-center"
-              >
-                Get Started
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
+            );
+          })}
+          <div className="pt-2 pb-1">
+            <Link
+              href="/shop"
+              className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-sunshine-500 text-gray-900 font-bold text-sm rounded-xl shadow-friendly hover:bg-sunshine-400 transition-all"
+            >
+              Get Started →
+            </Link>
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }
