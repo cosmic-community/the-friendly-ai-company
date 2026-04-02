@@ -9,23 +9,37 @@
     --color-meadow: #33CC5C;
     --color-blush: #FF3385;
     --color-warm: #FF9533;
+
+    /* Fluid type scale — clamp(min, preferred, max) */
+    --text-hero:    clamp(2.75rem, 5.5vw + 0.75rem, 5.25rem);
+    --text-display: clamp(2rem,   4vw + 0.5rem,  3.75rem);
+    --text-title:   clamp(1.5rem,  2.5vw + 0.25rem, 2.25rem);
+    --text-lead:    clamp(1rem,    1.25vw + 0.2rem, 1.2rem);
   }
 
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     color: #1a1a2e;
     background-color: #FFFDF8;
+    /* Subtle grain for depth */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.018'/%3E%3C/svg%3E");
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  p {
+    line-height: 1.7;
   }
 
   * {
@@ -34,6 +48,8 @@
 }
 
 @layer components {
+
+  /* ── Buttons ── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-sunshine-500 text-gray-900 font-bold rounded-2xl shadow-friendly hover:bg-sunshine-400 hover:shadow-friendly-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
   }
@@ -50,6 +66,7 @@
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/30 backdrop-blur-sm text-gray-900 font-bold rounded-2xl hover:bg-white/50 transition-all duration-300;
   }
 
+  /* ── Cards ── */
   .card-friendly {
     @apply bg-white rounded-3xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1;
   }
@@ -58,12 +75,13 @@
     @apply bg-white/70 backdrop-blur-md rounded-3xl border border-white/60 shadow-card;
   }
 
+  /* ── Gradients ── */
   .gradient-sunshine {
     background: linear-gradient(135deg, #FFF9D6 0%, #FFE985 50%, #FFD233 100%);
   }
 
   .gradient-hero {
-    background: linear-gradient(160deg, #FFFBF0 0%, #FFF5D6 40%, #F0F7FF 100%);
+    background: linear-gradient(168deg, #FFFCF0 0%, #FFF8E1 35%, #F5F0FF 75%, #F0F7FF 100%);
   }
 
   .gradient-sky {
@@ -84,16 +102,26 @@
       radial-gradient(at 0% 100%, hsla(45, 80%, 80%, 0.3) 0px, transparent 50%);
   }
 
+  /* ── Text Gradients ── */
+  /* On-brand: warm gold → rich amber (no pink bleed) */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #E6A000 0%, #FF7A00 60%, #FF3385 100%);
+    background-image: linear-gradient(130deg, #CC8800 0%, #E6A000 40%, #FFD233 100%);
   }
 
+  /* High-contrast dark version */
   .text-gradient-dark {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, #1a1a2e 0%, #2d2d4e 100%);
   }
 
+  /* Sunshine pop — use on big display headings */
+  .text-gradient-sunshine {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #FFD233 0%, #FFDD57 50%, #FFE985 100%);
+  }
+
+  /* ── Badges ── */
   .badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase;
   }
@@ -102,6 +130,7 @@
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold;
   }
 
+  /* ── Texture overlays ── */
   .noise-overlay {
     position: relative;
   }
@@ -115,12 +144,19 @@
     z-index: 1;
   }
 
+  /* Gradient border using padding-box trick */
   .shine-border {
     background: linear-gradient(white, white) padding-box,
       linear-gradient(135deg, #FFD233, #FF9533, #FF3385) border-box;
     border: 2px solid transparent;
   }
 
+  /* Sunshine ring — for cards/avatars that need a yellow halo */
+  .ring-sunshine {
+    box-shadow: 0 0 0 3px rgba(255,210,51,0.45), 0 0 0 5px rgba(255,210,51,0.12);
+  }
+
+  /* ── Prose styles ── */
   .prose-friendly h1,
   .prose-friendly h2,
   .prose-friendly h3 {
@@ -151,6 +187,37 @@
   .prose-friendly blockquote {
     @apply border-l-4 border-sunshine-400 pl-4 italic text-gray-500;
   }
+
+  /* ── Fluid typography helpers ── */
+  .text-hero {
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 900;
+  }
+
+  .text-display {
+    font-size: var(--text-display);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+  }
+
+  .text-title {
+    font-size: var(--text-title);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+  }
+
+  .text-lead {
+    font-size: var(--text-lead);
+    line-height: 1.7;
+    color: #4B5563; /* gray-600 */
+  }
 }
 
 @layer utilities {
@@ -159,8 +226,7 @@
   }
 
   .animate-float-delayed {
-    animation: float 4s ease-in-out infinite;
-    animation-delay: 1.5s;
+    animation: float 4s ease-in-out 1.5s infinite;
   }
 
   .animate-wiggle {
@@ -172,11 +238,11 @@
   }
 
   .animate-slide-up {
-    animation: slideUp 0.6s ease-out both;
+    animation: slideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .animate-slide-up-delayed {
-    animation: slideUp 0.6s ease-out 0.15s both;
+    animation: slideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
   }
 
   .animate-shimmer {
@@ -188,8 +254,20 @@
   .animate-pulse-dot {
     animation: pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  .animate-blob {
+    animation: blobPulse 9s ease-in-out infinite;
+  }
+
+  /* Staggered entrance helpers */
+  .delay-75  { animation-delay:  75ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-225 { animation-delay: 225ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
 }
 
+/* ── Keyframes ── */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-12px); }
@@ -202,26 +280,31 @@
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 @keyframes pulseDot {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
 }
 
 @keyframes blobPulse {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  33% { transform: scale(1.05) translate(2%, -2%); }
-  66% { transform: scale(0.96) translate(-1%, 1%); }
+  0%, 100% { transform: scale(1)    translate(0,  0);   }
+  33%       { transform: scale(1.06) translate(2%, -2%); }
+  66%       { transform: scale(0.95) translate(-1%, 1%); }
+}
+
+@keyframes scrollFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
