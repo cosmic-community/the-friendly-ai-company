@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getBlogPosts } from '@/lib/cosmic';
 import BlogCard from '@/components/BlogCard';
 import type { Metadata } from 'next';
