@@ -13,6 +13,8 @@ const avatarGradients = [
   { bg: 'from-violet-400 to-purple-600', ring: 'ring-violet-200' },
 ];
 
+const defaultGrad = { bg: 'from-sunshine-400 to-amber-500', ring: 'ring-sunshine-200' };
+
 // Role/title suggestions for added personality
 const reviewerTitles = [
   'Small Business Owner',
@@ -29,7 +31,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const verifiedPurchase = review.metadata?.verified_purchase;
   const gradientIdx = reviewerName.charCodeAt(0) % avatarGradients.length;
   const titleIdx = reviewerName.charCodeAt(0) % reviewerTitles.length;
-  const avatarGrad = avatarGradients[gradientIdx];
+  const avatarGrad = avatarGradients[gradientIdx] ?? defaultGrad;
 
   return (
     <div className="relative group bg-white rounded-3xl p-6 sm:p-7 flex flex-col h-full border border-gray-100/80 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
