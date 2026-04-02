@@ -32,8 +32,18 @@ export default function RootLayout({
         />
         <script src="/dashboard-console-capture.js" />
       </head>
+      {/*
+        Header is fixed-position so it floats above all page content.
+
+        The spacer div below reserves the 70px the fixed header occupies,
+        preventing content from being hidden underneath it on inner pages.
+
+        On the homepage, HeroSection uses -mt-[70px] which cancels out
+        this spacer, letting the full-bleed video slide up behind the nav.
+      */}
       <body className="min-h-screen flex flex-col">
         <Header />
+        <div className="h-[70px] shrink-0" aria-hidden="true" />
         <main className="flex-1">{children}</main>
         <Footer />
         <CosmicBadge bucketSlug={bucketSlug} />

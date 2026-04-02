@@ -16,8 +16,14 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  // True when we're on the homepage — we'll render the header transparent
+  // until the user scrolls, so the hero video shows through unobstructed.
+  const isHome = pathname === '/';
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
+    // Fire once on mount so SSR→hydration state is correct
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -26,15 +32,26 @@ export default function Header() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
+  // ── Derived state ─────────────────────────────────────────────────────────
+  // Transparent mode: homepage AND not yet scrolled
+  const isTransparent = isHome && !scrolled;
+
+  // Whether nav text / icons should be light (white) for dark video bg
+  const isLight = isTransparent;
+
   return (
+    // Fixed positioning so the hero section can slide up behind it.
+    // On inner pages the header looks exactly the same as before.
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ease-out ${
-        scrolled
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-out ${
+        isTransparent
+          ? 'bg-transparent'
+          : scrolled
           ? 'bg-white/98 backdrop-blur-xl shadow-[0_1px_0_rgba(0,0,0,0.05),0_8px_32px_rgba(0,0,0,0.08)]'
           : 'bg-white/85 backdrop-blur-md border-b border-black/[0.04]'
       }`}
     >
-      {/* Top accent line — sunshine gradient */}
+      {/* Top accent line — sunshine gradient, appears on scroll */}
       <div
         className={`h-[2.5px] w-full transition-opacity duration-500 ${
           scrolled ? 'opacity-100' : 'opacity-0'
@@ -67,12 +84,18 @@ export default function Header() {
             {/* Wordmark */}
             <div className="flex flex-col -space-y-0.5">
               <span
-                className="text-[15px] sm:text-base font-extrabold text-gray-900 leading-tight tracking-[-0.02em]"
+                className={`text-[15px] sm:text-base font-extrabold leading-tight tracking-[-0.02em] transition-colors duration-500 ${
+                  isLight ? 'text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]' : 'text-gray-900'
+                }`}
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               >
                 The Friendly AI Co.
               </span>
-              <span className="text-[9.5px] text-gray-400/90 font-semibold hidden sm:block tracking-[0.12em] uppercase">
+              <span
+                className={`text-[9.5px] font-semibold hidden sm:block tracking-[0.12em] uppercase transition-colors duration-500 ${
+                  isLight ? 'text-white/70' : 'text-gray-400/90'
+                }`}
+              >
                 Marketing made friendly
               </span>
             </div>
@@ -90,7 +113,11 @@ export default function Header() {
                   href={link.href}
                   className={`relative px-[14px] py-2 text-[13.5px] font-semibold rounded-xl transition-all duration-200 select-none ${
                     isActive
-                      ? 'text-gray-900'
+                      ? isLight
+                        ? 'text-white'
+                        : 'text-gray-900'
+                      : isLight
+                      ? 'text-white/80 hover:text-white'
                       : 'text-gray-500 hover:text-gray-900'
                   }`}
                 >
@@ -98,8 +125,10 @@ export default function Header() {
                   <span
                     className={`absolute inset-0 rounded-xl transition-all duration-200 ${
                       isActive
-                        ? 'bg-sunshine-400/15'
-                        : 'bg-transparent group-hover:bg-gray-100'
+                        ? isLight
+                          ? 'bg-white/15'
+                          : 'bg-sunshine-400/15'
+                        : 'bg-transparent'
                     }`}
                   />
                   <span className="relative z-10">{link.label}</span>
@@ -107,7 +136,9 @@ export default function Header() {
                   {/* Active indicator dot */}
                   {isActive && (
                     <span
-                      className="absolute bottom-[5px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sunshine-500"
+                      className={`absolute bottom-[5px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-colors duration-500 ${
+                        isLight ? 'bg-sunshine-400' : 'bg-sunshine-500'
+                      }`}
                       aria-hidden="true"
                     />
                   )}
@@ -121,12 +152,16 @@ export default function Header() {
             {/* Ghost secondary link */}
             <Link
               href="/blog"
-              className="text-[13px] font-semibold text-gray-500 hover:text-gray-900 transition-colors duration-200 px-2 py-1"
+              className={`text-[13px] font-semibold transition-colors duration-200 px-2 py-1 ${
+                isLight
+                  ? 'text-white/80 hover:text-white'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
             >
               Free Resources
             </Link>
 
-            {/* Primary CTA */}
+            {/* Primary CTA — always yellow, always legible */}
             <Link
               href="/shop"
               className="group/cta relative inline-flex items-center gap-2 px-5 py-[10px] font-bold text-[13.5px] text-gray-900 rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-[1px] active:translate-y-0 shadow-[0_2px_8px_rgba(255,210,51,0.4)] hover:shadow-[0_6px_20px_rgba(255,210,51,0.55)]"
@@ -158,7 +193,11 @@ export default function Header() {
           {/* ── Mobile Hamburger ── */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden relative p-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 active:bg-gray-200 transition-all duration-150"
+            className={`md:hidden relative p-2.5 rounded-xl transition-all duration-150 ${
+              isLight
+                ? 'text-white/90 hover:text-white hover:bg-white/15 active:bg-white/25'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 active:bg-gray-200'
+            }`}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
           >
@@ -189,6 +228,7 @@ export default function Header() {
           isMobileMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
+        {/* Always use solid backdrop for mobile menu for readability */}
         <div className="border-t border-black/[0.05] bg-white/98 backdrop-blur-xl">
           <nav className="max-w-7xl mx-auto px-4 pt-3 pb-5 space-y-0.5" aria-label="Mobile navigation">
             {navLinks.map((link) => {
