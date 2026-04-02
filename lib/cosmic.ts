@@ -2,6 +2,7 @@ import { createBucketClient } from '@cosmicjs/sdk';
 import type {
   Product,
   ProductCategory,
+  ProductContent,
   Review,
   BlogPost,
   Page,
@@ -107,6 +108,48 @@ export async function getProductCategories(): Promise<ProductCategory[]> {
     }
     console.error('Error fetching categories:', error);
     return [];
+  }
+}
+
+// Product Content Modules (Members Area)
+export async function getProductContent(productSlug: string): Promise<ProductContent[]> {
+  try {
+    // First resolve the product to get its id
+    const product = await getProductBySlug(productSlug);
+    if (!product) return [];
+
+    const response = await cosmic.objects
+      .find({ type: 'product-content', 'metadata.product': product.id })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1);
+
+    return (response.objects as unknown as ProductContent[]).sort((a, b) => {
+      const numA = a.metadata?.module_number ?? 999;
+      const numB = b.metadata?.module_number ?? 999;
+      return (numA as number) - (numB as number);
+    });
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return [];
+    }
+    console.error('Error fetching product content:', error);
+    return [];
+  }
+}
+
+export async function getProductContentBySlug(slug: string): Promise<ProductContent | null> {
+  try {
+    const response = await cosmic.objects
+      .findOne({ type: 'product-content', slug })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1);
+    return response.object as unknown as ProductContent;
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return null;
+    }
+    console.error('Error fetching product content module:', error);
+    return null;
   }
 }
 

@@ -41,6 +41,19 @@ export interface Product extends CosmicObject {
   };
 }
 
+// Product Content Modules (Members Area)
+export interface ProductContent extends CosmicObject {
+  type: 'product-content';
+  metadata: {
+    product?: Product | string;
+    module_title?: string;
+    module_number?: number;
+    content?: string;
+    summary?: string;
+    estimated_time?: number;
+  };
+}
+
 // Reviews
 export interface Review extends CosmicObject {
   type: 'reviews';
