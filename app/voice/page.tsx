@@ -95,8 +95,8 @@ export default function VoicePage() {
 
   const startListening = useCallback(() => {
     setError(null);
-    const SpeechRecognition = window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition: typeof window.SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       setError('Speech recognition is not supported in your browser. Try Chrome or Edge.');
       return;
     }
@@ -108,7 +108,7 @@ export default function VoicePage() {
       setIsSpeaking(false);
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
@@ -138,7 +138,6 @@ export default function VoicePage() {
 
     recognition.onend = () => {
       setIsListening(false);
-      // Get the final transcript from the closure
       const finalText = document.getElementById('live-transcript')?.textContent?.trim();
       if (finalText) {
         sendToHAL(finalText);
