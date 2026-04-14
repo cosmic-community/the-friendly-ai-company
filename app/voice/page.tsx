@@ -18,7 +18,8 @@ export default function VoicePage() {
   const [error, setError] = useState<string | null>(null);
   const [audioLevel, setAudioLevel] = useState(0);
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // Changed: Use generic type to avoid direct SpeechRecognition reference in useRef
+  const recognitionRef = useRef<InstanceType<typeof SpeechRecognition> | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
@@ -95,8 +96,9 @@ export default function VoicePage() {
 
   const startListening = useCallback(() => {
     setError(null);
-    const SpeechRecognition = window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition: typeof window.SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    // Changed: Access SpeechRecognition from window with proper typing from our declaration file
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       setError('Speech recognition is not supported in your browser. Try Chrome or Edge.');
       return;
     }
@@ -108,7 +110,7 @@ export default function VoicePage() {
       setIsSpeaking(false);
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
@@ -120,11 +122,13 @@ export default function VoicePage() {
       setStatus('Listening...');
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    // Changed: Use Event type and cast to SpeechRecognitionEvent for the result handler
+    recognition.onresult = (event: Event) => {
+      const srEvent = event as SpeechRecognitionEvent;
       let interimTranscript = '';
       let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
+      for (let i = srEvent.resultIndex; i < srEvent.results.length; i++) {
+        const result = srEvent.results[i];
         if (result && result[0]) {
           if (result.isFinal) {
             finalTranscript += result[0].transcript;
@@ -147,10 +151,12 @@ export default function VoicePage() {
       }
     };
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    // Changed: Use Event type and cast to SpeechRecognitionErrorEvent for the error handler
+    recognition.onerror = (event: Event) => {
+      const srErrorEvent = event as SpeechRecognitionErrorEvent;
       setIsListening(false);
-      if (event.error !== 'no-speech') {
-        setError(`Speech recognition error: ${event.error}`);
+      if (srErrorEvent.error !== 'no-speech') {
+        setError(`Speech recognition error: ${srErrorEvent.error}`);
       }
       setStatus('Press the microphone to talk to HAL');
     };
