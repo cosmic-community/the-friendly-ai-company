@@ -1,14 +1,11 @@
 import Link from 'next/link';
 import { getMetafieldValue } from '@/lib/cosmic';
 import type { Homepage } from '@/types';
+import HeroCanvas from '@/components/3d/HeroCanvas';
 
 interface HeroSectionProps {
   homepage: Homepage | null;
 }
-
-// Video URL for the hero background
-const HERO_VIDEO_URL =
-  'https://cdn.cosmicjs.com/7bdf30f0-2ebc-11f1-86e7-4be326c2a87b-veo-af945114-7a22-4e35-b547-1721ce973ffc.mp4';
 
 export default function HeroSection({ homepage }: HeroSectionProps) {
   const tagline = homepage?.metadata?.hero_tagline
@@ -20,12 +17,12 @@ export default function HeroSection({ homepage }: HeroSectionProps) {
 
   // Split tagline: last word gets the highlight pill treatment
   const words = tagline.split(' ');
-  const highlightWord = words[words.length - 1];
+  const highlightWord = words[words.length - 1] ?? '';
   const leadWords = words.slice(0, -1).join(' ');
 
   return (
     // -mt-[70px] pulls the section up behind the fixed header so the
-    // video truly bleeds edge-to-edge from the very top of the viewport.
+    // canvas truly bleeds edge-to-edge from the very top of the viewport.
     <section className="relative overflow-hidden min-h-[100svh] flex flex-col justify-center -mt-[70px]">
 
       {/* ══════════════════════════════════════════════════════
@@ -42,38 +39,13 @@ export default function HeroSection({ homepage }: HeroSectionProps) {
       />
 
       {/* ══════════════════════════════════════════════════════
-          LAYER 1 — Video background (md+ only)
+          LAYER 1 — 3D Robot scene (md+ only, lazy-loaded)
+          Replaces the previous video background.
       ══════════════════════════════════════════════════════ */}
-      <div className="absolute inset-0 hidden md:block" aria-hidden="true">
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          src={HERO_VIDEO_URL}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-        />
-        {/* Multi-layer overlay: dark vignette + warm yellow tint so brand colours bleed through */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(160deg, rgba(0,0,0,0.52) 0%, rgba(20,12,0,0.48) 45%, rgba(0,0,0,0.55) 100%)',
-          }}
-        />
-        {/* Subtle sunshine tint — keeps brand warmth without washing out legibility */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(255,210,51,0.10) 0%, rgba(255,188,0,0.06) 60%, rgba(0,0,0,0.0) 100%)',
-          }}
-        />
-      </div>
+      <HeroCanvas />
 
       {/* ══════════════════════════════════════════════════════
-          LAYER 2 — Animated blobs (mobile only, video handles desktop)
+          LAYER 2 — Animated blobs (mobile only)
       ══════════════════════════════════════════════════════ */}
       <div className="absolute inset-0 md:hidden pointer-events-none" aria-hidden="true">
         <div
