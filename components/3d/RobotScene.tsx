@@ -93,10 +93,7 @@ export default function RobotScene() {
           {/* Adaptive performance — drops DPR on slow devices */}
           <AdaptiveDpr pixelated />
           <AdaptiveEvents />
-          <PerformanceMonitor
-            onDecline={() => undefined}
-            onIncline={() => undefined}
-          />
+          <PerformanceMonitor />
 
           <SceneLights />
 
